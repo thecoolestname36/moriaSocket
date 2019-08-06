@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>@ViewBag.Title - Moria Socket</title>
+	<link rel="shortcut icon" href="~/Content/Images/favicon.png" type="image/x-icon" />
+	@Styles.Render("~/Content/css")
+</head>
+<body>
+	<div id="bg"></div>
+	@RenderBody()
+	
+	<div class="row" id="footer">
+		<div class="col-md-6">WSS Connection: <span id="wss-connection">Unintalized</span></div>
+		<div class="col-md-6">IIS User: <span id="iis-user"> @HttpContext.Current.User.Identity.Name </span></div>
+	</div>
+	<div id="loader"></div>
+	@Scripts.Render("~/bundles/jquery")
+	@Scripts.Render("~/bundles/bootstrap")
+	@RenderSection("scripts", required: false)
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+﻿
+@{
+	ViewBag.Title = "Index";
+}
+
+<div id="main-container" class="container-fluid">
+	<div id="loading-overlay" class="loading"></div>
+	<div id="preview-overlay" class>
+		<div id="preview-overlay-container" class="container-fluid">
+			<div class="row preview-navbar-row">
+				<button 
+					id="preview-overlay-download-btn" 
+					class="menubar-button button-glass button-glass col-lg-6 col-md-6 col-sm-6 col-xs-6"
+					onclick="document.DirectoryExplorer.PreviewOverlay.ActionDownload(event, this);"
+				>Download</button>
+				<button 
+					id="preview-overlay-close-btn" 
+					class="menubar-button button-glass button-glass col-lg-6 col-md-6 col-sm-6 col-xs-6" 
+					onclick='document.DirectoryExplorer.PreviewOverlay.ActionClose(event, this);'
+				>Close</button>
+			</div>
+			<div class="row preview-overlay-item-row">
+				<div id="preview-overlay-item-container" class="col-lg-12 col-md-12 col-sm-12 col-xs-12"></div>
+			</div>
+		</div>
+	</div>
+	<div id="right-click-context-menu" class style>
+		<div class="container-fluid"></div>
+	</div>
+	<div id="file-uploads" style="display:none;"></div>
+	<div class="row">
+		<div class="file-directory-main col-lg-12 col-md-12 col-sm-12">
+			<section>
+
+				<article id="MenuBar" class="container-fluid">
+					<div class="row navbar-row">
+						<button id='CreateDirectoryButton' class='menubar-button button-glass button-glass col-lg-1 col-md-1 col-sm-1 col-xs-3' onclick='document.DirectoryExplorer.ActionMkdir();'>
+							<img class='icon-image' src='/Content/Images/create-folder-icon.png'>
+						</button>
+						<button class='menubar-button button-glass col-lg-1 col-md-1 col-sm-1 col-xs-3' onclick='document.DirectoryExplorer.ActionUpload(event, this);'>
+							<img class='icon-image' src='/Content/Images/upload-icon.png'>
+						</button>
+						<button class='menubar-button button-glass col-lg-1 col-md-1 col-sm-1 col-xs-3' onclick='document.DirectoryExplorer.ActionCdHome();'>
+							<img class='icon-image' src='/Content/Images/home-icon.png'>
+						</button>
+						<button class='menubar-button button-glass col-lg-1 col-md-1 col-sm-1 col-xs-3' onclick='document.DirectoryExplorer.ActionCdUp();'>
+							<img class='icon-image' src='/Content/Images/up-arrow-icon.png'>
+						</button>
+						<nav class="menubar-nav col-lg-8 col-md-8 col-sm-8 col-xs-12">
+							<ul id="NavbarPath" class="navbar-path mr-auto"></ul>
+						</nav>
+					</div>
+				</article>
+				<article id="DirectoryExplorer" class="container-fluid"></article>
+			</section>
+		</div>
+	</div>
+</div>
+
+@Scripts.Render("~/bundles/socketSecure")
+@Scripts.Render("~/viewBundles/browser")
