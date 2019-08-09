@@ -73,11 +73,12 @@
 	}
 
 	SendFileUploadBase64(name, file) {
+		var startTime = (new Date()).getTime();
 		var index = 0;
 		var fileLength = file.length;
 		var segmentSize = 256;
 		var fileUploadId = this.FileUploadID;
-
+		//console.log("SendFileUploadBase64: initfileupload");
 		var m = new ClientMessage();
 		m.Command = "initfileupload";
 		m.Contents = {
@@ -85,6 +86,7 @@
 			n: name, // name
 			c: Math.ceil((fileLength / segmentSize)) // segmentCount
 		};
+		var segmentHundredth = Math.floor(m.Contents.c / 100);
 		this.SendSecure(JSON.stringify(m));
 
 		m.Command = "fileupload";
@@ -94,14 +96,21 @@
 			s: 0 // segmentNum
 			
 		};
+		
 		do {
 			m.Contents.d = file.substring(index, index + segmentSize);
 			index += segmentSize;
 			this.SendSecure(JSON.stringify(m));
-			//console.log(index, fileLength);
+			if ((m.Contents.s % segmentHundredth) === 0) {
+				var message = Number.parseInt(((index / fileLength) * 100)) + "%";
+				document.LoadingOverlay.SetMessage(message);
+			}
+
+
 			m.Contents.s++;
 		} while (index < fileLength);
-
+		document.LoadingOverlay.SetMessage("Finalizing...");
+		console.log("Duration: " + ((new Date()).getTime() - startTime));
 	}
 
 	ReceiveSecure(message) {
@@ -124,10 +133,16 @@
 					document.DirectoryExplorer.Renamed(serverMessage.Contents);
 					break;
 				case "filerequest":
-					document.FileRequests[serverMessage.Contents.FileRequestID].HandleData(serverMessage.Contents.Data, serverMessage.Contents.Complete);
+					document.FileRequests[serverMessage.Contents.FileRequestID].HandleData(serverMessage.Contents.Data, Number.parseInt(serverMessage.Contents.segmentNum), serverMessage.Contents.Complete);
 					//if (serverMessage.Contents.Complete) {
 					//	delete document.FileRequests[serverMessage.Contents.Metadata.MessageID];
 					//}
+					break;
+				case "uploadcomplete":
+					document.DirectoryExplorer.FileUploadComplete(serverMessage.Contents);
+					break;
+				case "filerequestinit":
+					document.FileRequests[serverMessage.Contents.FileRequestID].Segments = Number.parseInt(serverMessage.Contents.s);
 					break;
 				case "alert":
 					document.DirectoryExplorer.AlertReceived(serverMessage.Contents);

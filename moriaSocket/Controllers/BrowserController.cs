@@ -50,7 +50,7 @@ namespace moriaSocket.Controllers
 					key, 
 					new Components.Browser.BrowserSocket(
 						key, 
-						new Components.Browser.BrowserDirectoryWatcher(@"M:\inetpub\Moria")
+						new Components.Browser.BrowserDirectoryWatcher(@"M:\inetpub\TestMoria")
 					)
 				);
 				WebSocketManager.BrowserSockets.TryGetValue(key, out Components.Browser.BrowserSocket socket);

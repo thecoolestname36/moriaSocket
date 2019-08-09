@@ -103,9 +103,22 @@ namespace moriaSocket.Components.Browser
 					{
 						using (FileStream fs = ServerCommand.GetFile(path))
 						{
+							FileInfo fi = new FileInfo(path);
 							FileRequest fr = new FileRequest(fileRequestId);
 							int offset = 0;
 							int bufferSize = WebSocketManager.BUFFER_SIZE;
+
+							await this.SendAes(Json.Encode(new ServerMessage()
+							{
+								Command = "filerequestinit",
+								Contents = new Dictionary<string, string>(1)
+								{
+									{ "FileRequestID", fileRequestId },
+									{ "s", (fi.Length / (long) bufferSize).ToString() }
+								}
+							}));
+
+
 							int bytesRead = bufferSize;
 							while (bytesRead == bufferSize)
 							{
@@ -128,6 +141,7 @@ namespace moriaSocket.Components.Browser
 									Command = "filerequest",
 									Contents = fr
 								}));
+								fr.segmentNum++;
 							}
 							fs.Close();
 						}
@@ -154,7 +168,8 @@ namespace moriaSocket.Components.Browser
 					}
 					this.FileUploadBuffer.TryGetValue(fileUploadId, out FileUpload<int, string> upload);
 					SpinWait.SpinUntil(() => upload.Done);
-					this.SendServerAlert(name + " finished uploading.");
+					//this.SendServerAlert(name + " finished uploading.");
+					this.SendServerUploadComplete(upload.FileUploadID);
 					this.FileUploadBuffer.TryRemove(fileUploadId, out FileUpload<int, string> deletedUpload);
 				}
 				else
@@ -354,6 +369,18 @@ namespace moriaSocket.Components.Browser
 			}));
 		}
 
+
+		public void SendServerUploadComplete(string id)
+		{
+			this.SendAes(Json.Encode(new ServerMessage
+			{
+				Command = "uploadcomplete",
+				Contents = new Dictionary<string, string>(1)
+				{
+					{ "id", id }
+				}
+			}));
+		}
 
 	}
 }

@@ -329,6 +329,7 @@ div#loading-overlay {
 	top: 0px;
 	left: 0px;
 	z-index: -1;
+	overflow:hidden;
 	background: rgba(243, 247, 255, 0.0);
 	-webkit-transition: background .2s ease-out;
 	-moz-transition: background .2s ease-out;
@@ -339,6 +340,21 @@ div#loading-overlay.loading {
 	z-index: 1000;
 	pointer-events: auto;
 	background: rgba(204, 204, 204, 0.32);
+}
+div#loading-overlay-message {
+	text-align: center;
+	height: 0%;
+	vertical-align: middle;
+	font-size: 5em;
+	color: #e4e4e4;
+	z-index: -1;
+	text-shadow: 0px 0px 7px black;
+	background-color: rgba(0,0,0,0.0);
+}
+div#loading-overlay-message.show {
+	height: 100%;
+	z-index: 1000;
+	background-color: rgba(0,0,0,0.6);
 }
 div#preview-overlay {
 	position: fixed;

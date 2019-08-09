@@ -56,7 +56,7 @@ namespace moriaSocket.Components.Browser
 
 		~FileUpload() {
 			//this.Stream.Close();
-			//this.Stream.Dispose();
+			this.Stream.Dispose();
 		}
 
 

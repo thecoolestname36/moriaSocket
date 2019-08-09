@@ -53,25 +53,32 @@
 	}
 
 	ActionFileClick(event, elem) {
-		var exists = true;
-		if (!document.FileRequests.hasOwnProperty(this.Contents[elem.parentElement.id].FileRequestID)) {
-			exists = false;
-			this.Contents[elem.parentElement.id].FileRequestID = document.Socket.FileRequestID;
-			document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID] = new FileRequest(
-				elem.parentElement.id
-			)
-			document.Socket.SendGetFile(
-				this.Contents[elem.parentElement.id].Name,
-				this.Contents[elem.parentElement.id].FileRequestID
-			);
+		//var exists = true;
+		//if (!document.FileRequests.hasOwnProperty(this.Contents[elem.parentElement.id].FileRequestID)) {
+		//	exists = false;
+		//	this.Contents[elem.parentElement.id].FileRequestID = document.Socket.FileRequestID;
+		//	document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID] = new FileRequest(
+		//		elem.parentElement.id
+		//	)
+		//	document.Socket.SendGetFile(
+		//		this.Contents[elem.parentElement.id].Name,
+		//		this.Contents[elem.parentElement.id].FileRequestID
+		//	);
 			
-		}
-		if (document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID].CanPreview) {
-			this.PreviewOverlay.Show(elem.parentElement.id);
-		}
-		if (exists) {
-			document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID].Complete = true;
-		}
+		//}
+		//if (document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID].CanPreview) {
+		//	this.PreviewOverlay.Show(elem.parentElement.id);
+		//}
+		//if (exists) {
+		//	document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID].Complete = true;
+		//}
+		document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID] = new FileRequest(
+			elem.parentElement.id
+		)
+		document.Socket.SendGetFile(
+			this.Contents[elem.parentElement.id].Name,
+			this.Contents[elem.parentElement.id].FileRequestID
+		);
 		
 	}
 
@@ -142,27 +149,35 @@
 	}
 
 	ActionUpload(event, that) {
-		//alert("action Upload");
-		
 		var input = document.createElement("input");
 		input.type = "file";
 		input.onchange = function () {
-			//alert("On change fired...");
+			var file = this.files[0];
 			var filename = this.files[0].name;
 			var reader = new FileReader();
-			reader.readAsBinaryString(this.files[0]);
+			reader.readAsBinaryString(file);
 			//reader.onprogress = function (event) {}
 			reader.onload = function () {
-				//alert("Parsed...");
+				document.LoadingOverlay.Show();
+				document.LoadingOverlay.SetMessage("Parsing Upload...");
 				document.Socket.SendFileUploadBase64(filename, btoa(reader.result));
 			};
 			reader.onerror = function (error) {
-				//alert('Error: ', error);
+				document.LoadingOverlay.Hide();
+				document.LoadingOverlay.ClearMessage("");
+				alert('Error: ', error);
 			};
+			
+			
 		};
 		//document.getElementById("file-uploads").appendChild(input);
 		//document.getElementById("file-uploads").firstElementChild.click();
 		input.click(); // This is causing errors and will only sometimes fire the onchange event.
+	}
+
+	FileUploadComplete(contents) {
+		document.LoadingOverlay.Hide();
+		document.LoadingOverlay.ClearMessage("");
 	}
 
 	ErrorReceived(contents) {
