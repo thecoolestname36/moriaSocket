@@ -23,7 +23,6 @@
 		super(url, protocol);
 		this.Security = security;
 
-
 		// WebSocket action listeners //
 		this.onopen = function (event) {
 			document.getElementById("wss-connection").innerHTML = "Open - Unsecure";

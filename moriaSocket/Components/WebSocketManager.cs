@@ -8,7 +8,7 @@ namespace moriaSocket.Components
 		public static int CollectionConcurrency;
 		public static Dictionary<string, Browser.BrowserSocket> BrowserSockets;
 		public static Random Rand;
-		
+
 		public const int BUFFER_SIZE = 510; // Needs to be a multiple of 3 for the base64 encoding result on the other side.
 
 		public WebSocketManager()

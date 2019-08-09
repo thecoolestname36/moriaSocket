@@ -6,6 +6,7 @@ using System.Threading;
 using System.Web.Helpers;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
+using System.Timers;
 
 namespace moriaSocket.Components.Browser
 {
@@ -31,7 +32,7 @@ namespace moriaSocket.Components.Browser
 				//this.DirWatcher.Changed += this.OnChanged; // This event seems to be useful, will fire if an internal folder changes
 				this.DirWatcher.Deleted += this.OnDeleted;
 			}
-			
+
 		}
 
 		public async void SendDir() {
@@ -111,7 +112,7 @@ namespace moriaSocket.Components.Browser
 							await this.SendAes(Json.Encode(new ServerMessage()
 							{
 								Command = "filerequestinit",
-								Contents = new Dictionary<string, string>(1)
+								Contents = new Dictionary<string, string>(2)
 								{
 									{ "FileRequestID", fileRequestId },
 									{ "s", (fi.Length / (long) bufferSize).ToString() }
@@ -369,6 +370,17 @@ namespace moriaSocket.Components.Browser
 			}));
 		}
 
+		public void SendServerConsoleLog(string a)
+		{
+			this.SendAes(Json.Encode(new ServerMessage
+			{
+				Command = "consolelog",
+				Contents = new Dictionary<string, string>(1)
+				{
+					{ "message", a }
+				}
+			}));
+		}
 
 		public void SendServerUploadComplete(string id)
 		{

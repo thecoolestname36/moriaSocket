@@ -143,6 +143,12 @@ li:hover {
         padding-left:0px;
         padding-right:0px;
     }
+	div#right-click-context-menu {
+		top:10% !important;
+		left:10% !important;
+		width:80% !important;
+		height:60% !important;
+	}
 }
 .h {
     background-color:rgba(0,0,0,0.0) !important;
@@ -249,11 +255,12 @@ button.card-options-button {
     border-bottom:1px solid darkgrey;
 }
 .browser-item-large {
-	max-width: 100px;
+	/*max-width: 100px;
 	max-height: 100px;
-	overflow: hidden;
+	overflow: hidden;*/
 }
 .browser-button {
+	width:100%;
 	border: none;
 	color: #3a3a3a;
 	padding: 6px 12px;
@@ -267,8 +274,11 @@ button.card-options-button {
 	transition-duration: 0.15s;
 	transition-property: background-color, text-shadow;
 }
+	.browser-button .browser-button-text.col-12 {
+		overflow-wrap: break-word;
+	}
 .col-8 {
-    overflow:hidden;
+	overflow: hidden;
 }
 #file-upload {
     display: none;
@@ -408,7 +418,6 @@ div#right-click-context-menu {
 		height: 5px;
 		background-color: #cacaca;
 	}
-
 	@media (min-width: 576px) {
 		.container {
 			max-width: 540px;
@@ -418,6 +427,9 @@ div#right-click-context-menu {
 	@media (min-width: 768px) {
 		.container {
 			max-width: 720px;
+		}
+		div#right-click-context-menu {
+			
 		}
 	}
 

@@ -249,6 +249,7 @@
     <Content Include="Views\Error\Error.cshtml" />
     <Content Include="Views\Browser\Index.cshtml" />
     <Content Include="Views\Login\Index.cshtml" />
+    <Content Include="Views\Error\Timeout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

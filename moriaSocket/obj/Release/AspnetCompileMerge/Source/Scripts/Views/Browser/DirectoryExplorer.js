@@ -13,6 +13,15 @@
 		this.Navbar = document.getElementById("NavbarPath");
 		this.Navbar.appendChild(this.Cwd[this.Cwd.length - 1].ListItemElem);
 		this.PreviewOverlay = new PreviewOverlay("preview-overlay");
+		history.pushState({}, '');
+		window.onpopstate = function () {
+			if (!document.RightClickContextMenu.Hidden) {
+				document.RightClickContextMenu.Hide();
+			} else {
+				document.DirectoryExplorer.ActionCdUp();
+			}
+			history.pushState({}, '');
+		};
 	}
 
 	GetCwdString() {
@@ -160,7 +169,9 @@
 			reader.onload = function () {
 				document.LoadingOverlay.Show();
 				document.LoadingOverlay.SetMessage("Parsing Upload...");
-				document.Socket.SendFileUploadBase64(filename, btoa(reader.result));
+				var id = document.Socket.FileUploadID;
+				document.Socket.FileUpload[id] = btoa(reader.result);
+				document.Socket.SendFileUploadBase64(filename, id);
 			};
 			reader.onerror = function (error) {
 				document.LoadingOverlay.Hide();
@@ -175,11 +186,6 @@
 		input.click(); // This is causing errors and will only sometimes fire the onchange event.
 	}
 
-	FileUploadComplete(contents) {
-		document.LoadingOverlay.Hide();
-		document.LoadingOverlay.ClearMessage("");
-	}
-
 	ErrorReceived(contents) {
 		alert("Server Error." +"\n" + "Message: " + contents.message);
 	}
@@ -188,5 +194,8 @@
 		alert("Server Alert." + "\n" + "Message: " + contents.message);
 	}
 
+	ConsoleLogReceived(contents) {
+		console.log("Server Console Log: " + contents.message);
+	}
 
 }

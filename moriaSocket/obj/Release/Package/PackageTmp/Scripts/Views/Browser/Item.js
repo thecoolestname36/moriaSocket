@@ -53,7 +53,7 @@
 		this.Elem.id = this._ID;
 		this.Elem.className = "browser-item-large col-xs-4 col-sm-3 col-md-2 col-xl-1";
 		this.TextElem = document.createElement("div");
-		this.TextElem.className = "col-12";
+		this.TextElem.className = "browser-button-text col-12";
 		this.TextElem.innerText = this._Name;
 		this.ButtonElem = document.createElement("button");
 		this.ButtonElem.className = "row button-glass browser-button";

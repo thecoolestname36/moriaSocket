@@ -12,6 +12,17 @@ namespace moriaSocket.Controllers
 			return View("Error");
 		}
 
+		public ActionResult Timeout()
+		{
+			if (HttpContext.User.Identity.IsAuthenticated)
+			{
+				return new RedirectResult("https://"+HttpContext.Request.Url.Host);
+			}
+			else {
+				return new HttpUnauthorizedResult("Timeout.");
+			}
+		}
+
 		public ActionResult BadRequest() {
 			ViewBag.Code = 400;
 			ViewBag.Message = "Bad Request";
