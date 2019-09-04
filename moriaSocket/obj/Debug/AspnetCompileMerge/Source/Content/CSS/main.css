@@ -127,7 +127,7 @@ li:hover {
     background-size: cover;
     background-attachment: fixed;
     /*background-image: url('background.jpg');*/
-    background-image: url('../Images/background.jpg');
+    background-image: url('../Content/Images/background.jpg');
 }
 @media only screen and (max-width: 700px) {
     body {
@@ -143,6 +143,12 @@ li:hover {
         padding-left:0px;
         padding-right:0px;
     }
+	div#right-click-context-menu {
+		top:10% !important;
+		left:10% !important;
+		width:80% !important;
+		height:60% !important;
+	}
 }
 .h {
     background-color:rgba(0,0,0,0.0) !important;
@@ -249,11 +255,12 @@ button.card-options-button {
     border-bottom:1px solid darkgrey;
 }
 .browser-item-large {
-	max-width: 100px;
+	/*max-width: 100px;
 	max-height: 100px;
-	overflow: hidden;
+	overflow: hidden;*/
 }
 .browser-button {
+	width:100%;
 	border: none;
 	color: #3a3a3a;
 	padding: 6px 12px;
@@ -267,8 +274,11 @@ button.card-options-button {
 	transition-duration: 0.15s;
 	transition-property: background-color, text-shadow;
 }
+	.browser-button .browser-button-text.col-12 {
+		overflow-wrap: break-word;
+	}
 .col-8 {
-    overflow:hidden;
+	overflow: hidden;
 }
 #file-upload {
     display: none;
@@ -329,6 +339,7 @@ div#loading-overlay {
 	top: 0px;
 	left: 0px;
 	z-index: -1;
+	overflow:hidden;
 	background: rgba(243, 247, 255, 0.0);
 	-webkit-transition: background .2s ease-out;
 	-moz-transition: background .2s ease-out;
@@ -339,6 +350,21 @@ div#loading-overlay.loading {
 	z-index: 1000;
 	pointer-events: auto;
 	background: rgba(204, 204, 204, 0.32);
+}
+div#loading-overlay-message {
+	text-align: center;
+	height: 0%;
+	vertical-align: middle;
+	font-size: 5em;
+	color: #e4e4e4;
+	z-index: -1;
+	text-shadow: 0px 0px 7px black;
+	background-color: rgba(0,0,0,0.0);
+}
+div#loading-overlay-message.show {
+	height: 100%;
+	z-index: 1000;
+	background-color: rgba(0,0,0,0.6);
 }
 div#preview-overlay {
 	position: fixed;
@@ -392,7 +418,6 @@ div#right-click-context-menu {
 		height: 5px;
 		background-color: #cacaca;
 	}
-
 	@media (min-width: 576px) {
 		.container {
 			max-width: 540px;
@@ -402,6 +427,9 @@ div#right-click-context-menu {
 	@media (min-width: 768px) {
 		.container {
 			max-width: 720px;
+		}
+		div#right-click-context-menu {
+			
 		}
 	}
 

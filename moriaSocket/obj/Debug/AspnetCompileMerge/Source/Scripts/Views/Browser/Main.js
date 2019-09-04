@@ -11,6 +11,6 @@ document.onclick = function () {
 		document.DirectoryExplorer = new DirectoryExplorer();
 	}
 	document.FileRequests = {};
-	document.Socket = new BrowserSocket(new Security(256, 128), "wss://" + location.host + "/Browser/OpenBrowser");
+	document.Socket = new BrowserSocket(new Security(256, 128), "wss://moria.sradzone.com/Browser/OpenBrowser");
 
 })();

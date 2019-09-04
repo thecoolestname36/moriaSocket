@@ -146,30 +146,29 @@
 		var index = 0;
 		var fileLength = this.FileUpload[id].length;
 		var segmentSize = 256;
-		var fileUploadId = this.FileUploadID;
 		//console.log("SendFileUploadBase64: initfileupload");
 		var m = new ClientMessage();
 		m.Command = "initfileupload";
 		m.Contents = {
-			i: fileUploadId,
+			i: id,
 			n: name, // name
 			c: Math.ceil((fileLength / segmentSize)) // segmentCount
 		};
 		this.SendSecure(JSON.stringify(m));
 
-		this.FileUploadPercentage[fileUploadId] = setInterval(function (max, id) {
+		this.FileUploadPercentage[id] = setInterval(function (max, id) {
 				
 			var message = Number.parseInt(((document.Socket.FileuploadSegmentCount[id] / max) * 100)) + "%";
 			document.LoadingOverlay.SetMessage(message);
 			//console.log(message);
 
-		}, 250, m.Contents.c, fileUploadId);
+		}, 250, m.Contents.c, id);
 
 
-		this.FileuploadSegmentCount[fileUploadId] = 0;
+		this.FileuploadSegmentCount[id] = 0;
 		m.Command = "fileupload";
 		m.Contents = {
-			i: fileUploadId,
+			i: id,
 			d: "", // data
 			s: 0 // segmentNum
 		};
@@ -184,7 +183,7 @@
 				document.Socket.SendSecure(json);
 				document.Socket.FileuploadSegmentCount[id]++;
 
-			}, (m.Contents.s/5), JSON.stringify(m), fileUploadId);
+			}, (m.Contents.s / 5), JSON.stringify(m), id);
 
 			//this.SendSecure(JSON.stringify(m));
 			//this.FileuploadSegmentCount[id]++;

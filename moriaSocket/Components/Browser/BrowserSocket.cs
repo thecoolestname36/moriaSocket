@@ -348,6 +348,7 @@ namespace moriaSocket.Components.Browser
 		}
 
 		public void SendServerError(Exception e) {
+			System.Diagnostics.EventLog.WriteEntry("MoriaSocket", e.Message, System.Diagnostics.EventLogEntryType.Error);
 			this.SendAes(Json.Encode(new ServerMessage
 			{
 				Command = "error",

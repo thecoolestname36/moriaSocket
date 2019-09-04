@@ -38,13 +38,22 @@ namespace moriaSocket.Controllers
 				
 			try
 			{
+				string dir = Environment.GetEnvironmentVariable("ASPNET_MORIA_DIRECTORY", EnvironmentVariableTarget.Machine);
+				if (dir == null)
+				{
+					return new HttpStatusCodeResult(500, "System Configuration Error.");
+				}
+				if (!System.IO.Directory.Exists(dir))
+				{
+					return new HttpStatusCodeResult(500, "File System Configuration Error.");
+				}
+
 				string key = System.Web.HttpContext.Current.User.Identity.Name + "_" + (Guid.NewGuid()).ToString();
 				WebSocketManager.BrowserSockets.Add(
 					key, 
 					new Components.Browser.BrowserSocket(
-						key, 
-						new Components.Browser.BrowserDirectoryWatcher(@"M:\inetpub\TestMoria")
-						//new Components.Browser.BrowserDirectoryWatcher(@"C:\inetpub\moriaSocket\directories")
+						key,
+						new Components.Browser.BrowserDirectoryWatcher(dir)
 					)
 				);
 				WebSocketManager.BrowserSockets.TryGetValue(key, out Components.Browser.BrowserSocket socket);

@@ -179,3 +179,4 @@ C:\Workspace\GitHub\moriaSocket\moriaSocket\obj\Release\moriaSocket.csproj.CoreC
 C:\Workspace\GitHub\moriaSocket\moriaSocket\obj\Release\moriaSocket.csproj.CopyComplete
 C:\Workspace\GitHub\moriaSocket\moriaSocket\obj\Release\moriaSocket.dll
 C:\Workspace\GitHub\moriaSocket\moriaSocket\obj\Release\moriaSocket.pdb
+C:\Workspace\GitHub\moriaSocket\moriaSocket\obj\Release\moriaSocket.csprojAssemblyReference.cache

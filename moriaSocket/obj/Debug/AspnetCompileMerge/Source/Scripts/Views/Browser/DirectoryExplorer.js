@@ -13,6 +13,15 @@
 		this.Navbar = document.getElementById("NavbarPath");
 		this.Navbar.appendChild(this.Cwd[this.Cwd.length - 1].ListItemElem);
 		this.PreviewOverlay = new PreviewOverlay("preview-overlay");
+		history.pushState({}, '');
+		window.onpopstate = function () {
+			if (!document.RightClickContextMenu.Hidden) {
+				document.RightClickContextMenu.Hide();
+			} else {
+				document.DirectoryExplorer.ActionCdUp();
+			}
+			history.pushState({}, '');
+		};
 	}
 
 	GetCwdString() {
@@ -53,25 +62,32 @@
 	}
 
 	ActionFileClick(event, elem) {
-		var exists = true;
-		if (!document.FileRequests.hasOwnProperty(this.Contents[elem.parentElement.id].FileRequestID)) {
-			exists = false;
-			this.Contents[elem.parentElement.id].FileRequestID = document.Socket.FileRequestID;
-			document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID] = new FileRequest(
-				elem.parentElement.id
-			)
-			document.Socket.SendGetFile(
-				this.Contents[elem.parentElement.id].Name,
-				this.Contents[elem.parentElement.id].FileRequestID
-			);
+		//var exists = true;
+		//if (!document.FileRequests.hasOwnProperty(this.Contents[elem.parentElement.id].FileRequestID)) {
+		//	exists = false;
+		//	this.Contents[elem.parentElement.id].FileRequestID = document.Socket.FileRequestID;
+		//	document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID] = new FileRequest(
+		//		elem.parentElement.id
+		//	)
+		//	document.Socket.SendGetFile(
+		//		this.Contents[elem.parentElement.id].Name,
+		//		this.Contents[elem.parentElement.id].FileRequestID
+		//	);
 			
-		}
-		if (document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID].CanPreview) {
-			this.PreviewOverlay.Show(elem.parentElement.id);
-		}
-		if (exists) {
-			document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID].Complete = true;
-		}
+		//}
+		//if (document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID].CanPreview) {
+		//	this.PreviewOverlay.Show(elem.parentElement.id);
+		//}
+		//if (exists) {
+		//	document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID].Complete = true;
+		//}
+		document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID] = new FileRequest(
+			elem.parentElement.id
+		)
+		document.Socket.SendGetFile(
+			this.Contents[elem.parentElement.id].Name,
+			this.Contents[elem.parentElement.id].FileRequestID
+		);
 		
 	}
 
@@ -142,23 +158,28 @@
 	}
 
 	ActionUpload(event, that) {
-		//alert("action Upload");
-		
 		var input = document.createElement("input");
 		input.type = "file";
 		input.onchange = function () {
-			//alert("On change fired...");
+			var file = this.files[0];
 			var filename = this.files[0].name;
 			var reader = new FileReader();
-			reader.readAsBinaryString(this.files[0]);
+			reader.readAsBinaryString(file);
 			//reader.onprogress = function (event) {}
 			reader.onload = function () {
-				//alert("Parsed...");
-				document.Socket.SendFileUploadBase64(filename, btoa(reader.result));
+				document.LoadingOverlay.Show();
+				document.LoadingOverlay.SetMessage("Parsing Upload...");
+				var id = document.Socket.FileUploadID;
+				document.Socket.FileUpload[id] = btoa(reader.result);
+				document.Socket.SendFileUploadBase64(filename, id);
 			};
 			reader.onerror = function (error) {
-				//alert('Error: ', error);
+				document.LoadingOverlay.Hide();
+				document.LoadingOverlay.ClearMessage("");
+				alert('Error: ', error);
 			};
+			
+			
 		};
 		//document.getElementById("file-uploads").appendChild(input);
 		//document.getElementById("file-uploads").firstElementChild.click();
@@ -173,5 +194,8 @@
 		alert("Server Alert." + "\n" + "Message: " + contents.message);
 	}
 
+	ConsoleLogReceived(contents) {
+		console.log("Server Console Log: " + contents.message);
+	}
 
 }
