@@ -1,6 +1,5 @@
 ﻿class WebSocketTLS extends WebSocket {
 
-	ReconnectTimeout = false;
 	Security = false;
 	_SecurityStatus = 0;
 	set SecurityStatus(val) {
@@ -24,23 +23,7 @@
 		this.Security = security;
 
 		// WebSocket action listeners //
-		this.onopen = function (event) {
-			document.getElementById("wss-connection").innerHTML = "Open - Unsecure";
-		};
-		this.onclose = function (event) {
-			document.getElementById("wss-connection").innerHTML = "Closed";
-			this.ReconnectTimeout = setTimeout(function () {
-				document.Main();
-			}, 3000);
-			this.onclosed(event);
-		};
 		this.onmessage = this.KeyExchange;
-
-		this.onerror = function (event) {
-			document.getElementById("wss-connection").innerHTML = "Error Observed ( see console log )";
-			console.error("WebSocket error observed:", event);
-		};
-
 		this.onsecure = function () { }
 		this.onclosed = function (event) { };
 
@@ -51,36 +34,32 @@
 	}
 
 	KeyExchange(event) {
-		document.getElementById("wss-connection").innerHTML = "Open - Handshaking...";
 		var publicKey = JSON.parse(event.data);
-		document.Socket.Security.SetRSAPublicKey(b64tohex(publicKey.modulus), b64tohex(publicKey.exponent));
-		document.Socket.SecurityStatus = document.Socket.STATUS_RSA_RECEIVED;
-		document.Socket.SendRSABase64(
+		this.Security.SetRSAPublicKey(b64tohex(publicKey.modulus), b64tohex(publicKey.exponent));
+		this.SecurityStatus = this.STATUS_RSA_RECEIVED;
+		this.SendRSABase64(
 			JSON.stringify(
 				{
-					key: document.Socket.Security.AesKey,
-					iv: document.Socket.Security.AesIv
+					key: this.Security.AesKey,
+					iv: this.Security.AesIv
 				}
 			)
 		);
-		document.Socket.Security.AesKey = CryptoJS.enc.Utf8.parse(document.Socket.Security.AesKey);
-		document.Socket.Security.AesIv = CryptoJS.enc.Utf8.parse(document.Socket.Security.AesIv);
-		document.getElementById("wss-connection").innerHTML = "Open - Key Exchange Complete...";
-		document.Socket.onmessage = document.Socket.Handshake;
-		document.Socket.SendAesBase64(document.Socket.Security.AesOath, true);
-		document.Socket.SecurityStatus = document.Socket.STATUS_HANDSHAKING;
+		this.Security.AesKey = CryptoJS.enc.Utf8.parse(this.Security.AesKey);
+		this.Security.AesIv = CryptoJS.enc.Utf8.parse(this.Security.AesIv);
+		this.onmessage = this.Handshake;
+		this.SendAesBase64(this.Security.AesOath, true);
+		this.SecurityStatus = this.STATUS_HANDSHAKING;
 	}
 
 	Handshake(payload) {
-		if (document.Socket.HandshakeAesBase64(payload) === document.Socket.Security.AesOath) {
-			document.getElementById("wss-connection").innerHTML = "Open - Handshake Complete";
-			document.Socket.onmessage = document.Socket.ReceiveAesBase64;
-			document.Socket.SecurityStatus = document.Socket.STATUS_SECURE;
+		if (this.HandshakeAesBase64(payload) === this.Security.AesOath) {
+			this.onmessage = this.ReceiveAesBase64;
+			this.SecurityStatus = this.STATUS_SECURE;
 		} else {
-			document.Socket.onmessage = false;
-			document.Socket.SecurityStatus = document.Socket.STATUS_UNSECURE;
-			document.getElementById("wss-connection").innerHTML = "Handshake Failed! Restarting...";
-			document.Socket.close();
+			this.onmessage = false;
+			this.SecurityStatus = this.STATUS_UNSECURE;
+			this.close();
 		}
 		
 	}
@@ -91,9 +70,9 @@
 	 */
 	//PublicKeyAuth(event) {
 	//	var publicKey = JSON.parse(event.data);
-	//	document.Socket.Security.SetRSAPublicKey(b64tohex(publicKey.modulus), b64tohex(publicKey.exponent));
-	//	document.Socket.SendRSABase64(prompt("Password"));
-	//	document.Socket.onmessage = document.Socket.SendAesKeysRSA;
+	//	this.Security.SetRSAPublicKey(b64tohex(publicKey.modulus), b64tohex(publicKey.exponent));
+	//	this.SendRSABase64(prompt("Password"));
+	//	this.onmessage = this.SendAesKeysRSA;
 	//}
 
 	/**
@@ -102,29 +81,30 @@
 	 */
 	//SendAesKeysRSA(event) {
 	//	if (event.data == "true") {
-	//		document.Socket.SendRSABase64(
+	//		this.SendRSABase64(
 	//			JSON.stringify(
 	//				{
-	//					key: document.Socket.Security.AesKey,
-	//					iv: document.Socket.Security.AesIv
+	//					key: this.Security.AesKey,
+	//					iv: this.Security.AesIv
 	//				}
 	//			));
-	//		document.Socket.Security.AesKey = CryptoJS.enc.Utf8.parse(document.Socket.Security.AesKey);
-	//		document.Socket.Security.AesIv = CryptoJS.enc.Utf8.parse(document.Socket.Security.AesIv);
-	//		document.Socket.onmessage = document.Socket.ReceiveAesBase64;
+	//		this.Security.AesKey = CryptoJS.enc.Utf8.parse(this.Security.AesKey);
+	//		this.Security.AesIv = CryptoJS.enc.Utf8.parse(this.Security.AesIv);
+	//		this.onmessage = this.ReceiveAesBase64;
 	//	}
 	//}
 
 	HandshakeAesBase64(event) {
 		var payload = event.data;
-		var message = document.Socket.Security.AesDecrypt(payload);
+		var message = this.Security.AesDecrypt(payload);
+		debugger;
 		return message.toString(CryptoJS.enc.Utf8);
 	}
 
 	ReceiveAesBase64(payload) {
-		if (document.Socket.IsReady()) {
-			var message = document.Socket.Security.AesDecrypt(payload.data);
-			document.Socket.ReceiveSecure(message.toString(CryptoJS.enc.Utf8));
+		if (this.IsReady()) {
+			var message = this.Security.AesDecrypt(payload.data);
+			this.ReceiveSecure(message.toString(CryptoJS.enc.Utf8));
 		} else {
 			console.log("WARNING: Not ready to receive Aes messages.");
 		}
@@ -147,9 +127,9 @@
 
 	SendRSABase64(message) {
 		if (this.SecurityStatus == this.STATUS_RSA_RECEIVED) {
-			document.Socket.send(
+			this.send(
 				hex2b64(
-					document.Socket.Security.RSAEncrypt(
+					this.Security.RSAEncrypt(
 						message
 					)
 				)

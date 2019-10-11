@@ -1,5 +1,6 @@
 ﻿class BrowserSocket extends WebSocketTLS {
 
+	ReconnectTimeout = false;
 	SessionTimeout = false;
 	SessionTimeoutInterval = false;
 
@@ -16,6 +17,17 @@
 
 	constructor(security, url) {
 		super(security, url, "browser");
+
+		this.onopen = function (event) {
+			document.getElementById("wss-connection").innerHTML = "Open - Unsecure";
+		};
+		this.onclose = function (event) {
+			document.getElementById("wss-connection").innerHTML = "Closed";
+			this.ReconnectTimeout = setTimeout(function () {
+				document.Main();
+			}, 3000);
+			this.onclosed(event);
+		};
 		this.onsecure = function (event) {
 			document.LoadingOverlay.Hide();
 			document.Socket.SendCdDir();
@@ -24,6 +36,10 @@
 			//console.log(event);
 			document.LoadingOverlay.Show();
 		}
+		this.onerror = function (event) {
+			document.getElementById("wss-connection").innerHTML = "Error Observed ( see console log )";
+			console.error("WebSocket error observed:", event);
+		};
 
 		
 		this.SessionTimeoutInterval = setInterval(function () {
