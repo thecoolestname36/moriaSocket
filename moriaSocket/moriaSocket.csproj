@@ -212,9 +212,11 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\jsbn\base64.js" />
     <Content Include="Scripts\jsbn\jsbn.js" />
+    <Content Include="Scripts\jsbn\jsbn2.js" />
     <Content Include="Scripts\jsbn\prng4.js" />
     <Content Include="Scripts\jsbn\rng.js" />
     <Content Include="Scripts\jsbn\rsa.js" />
+    <Content Include="Scripts\jsbn\rsa2.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\socket-secure\WebSocketTLS.js" />
     <Content Include="Scripts\socket-secure\Security.js" />

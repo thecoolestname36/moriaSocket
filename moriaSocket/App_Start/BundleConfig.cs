@@ -30,9 +30,11 @@ namespace moriaSocket
             bundles.Add(new ScriptBundle("~/bundles/socketSecure")
 				// JSBN
 				.Include("~/Scripts/jsbn/jsbn.js")
+				//.Include("~/Scripts/jsbn/jsbn2.js") // Use for client side RSA
 				.Include("~/Scripts/jsbn/prng4.js")
 				.Include("~/Scripts/jsbn/rng.js")
 				.Include("~/Scripts/jsbn/rsa.js")
+				//.Include("~/Scripts/jsbn/rsa2.js") // Use for client side RSA
 				.Include("~/Scripts/jsbn/base64.js")
 				// CryptoJS
 				.Include("~/Scripts/crypto-js/crypto-js.js")

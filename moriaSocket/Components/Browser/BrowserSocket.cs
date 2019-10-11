@@ -10,7 +10,7 @@ using System.Timers;
 
 namespace moriaSocket.Components.Browser
 {
-	public class BrowserSocket : WebSocketHandlerSecure
+	public class BrowserSocket : WebSocketHandlerSecure, IDisposable
 	{
 
 		public string Key;
@@ -33,6 +33,17 @@ namespace moriaSocket.Components.Browser
 				this.DirWatcher.Deleted += this.OnDeleted;
 			}
 
+		}
+
+		~BrowserSocket()
+		{
+			this.Dispose();
+		}
+
+		public void Dispose()
+		{
+			this.Context.WebSocket.CloseAsync(System.Net.WebSockets.WebSocketCloseStatus.NormalClosure, "Disposed", System.Threading.CancellationToken.None);
+			this.DirWatcher.Dispose();
 		}
 
 		public async void SendDir() {
@@ -333,7 +344,7 @@ namespace moriaSocket.Components.Browser
 									Task.Run(() => this.ClientFileUpload(message.Contents));
 									break;
 							}
-							System.Diagnostics.Debug.WriteLine("Received: " + message);
+							//System.Diagnostics.Debug.WriteLine("Received: " + message);
 						}
 					}
 				} catch (Exception e)
