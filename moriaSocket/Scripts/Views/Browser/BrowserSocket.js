@@ -29,11 +29,13 @@
 			this.onclosed(event);
 		};
 		this.onsecure = function (event) {
+			document.getElementById("wss-connection").innerHTML = "Open - Secure";
 			document.LoadingOverlay.Hide();
 			document.Socket.SendCdDir();
 		}
 		this.onclosed = function (event) {
 			//console.log(event);
+			document.getElementById("wss-connection").innerHTML = "Closed";
 			document.LoadingOverlay.Show();
 		}
 		this.onerror = function (event) {
