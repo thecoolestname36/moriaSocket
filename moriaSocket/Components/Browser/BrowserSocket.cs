@@ -10,15 +10,15 @@ using System.Timers;
 
 namespace moriaSocket.Components.Browser
 {
-	public class BrowserSocket : WebSocketHandlerSecure, IDisposable
+	public class BrowserSocket : WebSocketHandlerSecure
 	{
 
-		public string Key;
+		public string WSSID;
 		public BrowserDirectoryWatcher DirWatcher;
 		private ConcurrentDictionary<string, FileUpload<int, string>> FileUploadBuffer = new ConcurrentDictionary<string, FileUpload<int, string>>(WebSocketManager.CollectionConcurrency, 1);
 
-		public BrowserSocket(string key, BrowserDirectoryWatcher dir) {
-			this.Key = key;
+		public BrowserSocket(string WSSID, BrowserDirectoryWatcher dir) {
+			this.WSSID = WSSID;
 			this.WebSocketOptions = new AspNetWebSocketOptions()
 			{
 				SubProtocol = "browser",
@@ -37,19 +37,13 @@ namespace moriaSocket.Components.Browser
 
 		~BrowserSocket()
 		{
-			this.Dispose();
-		}
-
-		public void Dispose()
-		{
-			this.Context.WebSocket.CloseAsync(System.Net.WebSockets.WebSocketCloseStatus.NormalClosure, "Disposed", System.Threading.CancellationToken.None);
 			this.DirWatcher.Dispose();
 		}
 
-		public async void SendDir() {
+		public void SendDir() {
 			try
 			{
-				await this.SendAes(Json.Encode(new ServerMessage()
+				this.SendAes(Json.Encode(new ServerMessage()
 				{
 					Command = "dir",
 					Contents = ServerCommand.Dir(this.DirWatcher.Path)
@@ -105,7 +99,7 @@ namespace moriaSocket.Components.Browser
 			}
 		}
 
-		public async void GetFile(Dictionary<string,string> contents)
+		public void GetFile(Dictionary<string,string> contents)
 		{
 			if (contents.TryGetValue("Name", out string name) && contents.TryGetValue("FileRequestID", out string fileRequestId)) {
 				string path = this.DirWatcher.Path + @"\" + name;
@@ -120,7 +114,7 @@ namespace moriaSocket.Components.Browser
 							int offset = 0;
 							int bufferSize = WebSocketManager.BUFFER_SIZE;
 
-							await this.SendAes(Json.Encode(new ServerMessage()
+							this.SendAes(Json.Encode(new ServerMessage()
 							{
 								Command = "filerequestinit",
 								Contents = new Dictionary<string, string>(2)
@@ -148,7 +142,7 @@ namespace moriaSocket.Components.Browser
 
 								fr.Data = System.Convert.ToBase64String(buffer);
 								fr.Complete = bytesRead != bufferSize;
-								await this.SendAes(Json.Encode(new ServerMessage()
+								this.SendAes(Json.Encode(new ServerMessage()
 								{
 									Command = "filerequest",
 									Contents = fr
@@ -224,6 +218,22 @@ namespace moriaSocket.Components.Browser
 			return;
 		}
 
+		public void SendWSSID()
+		{
+			try
+			{
+				this.SendAes(Json.Encode(new ServerMessage()
+				{
+					Command = "wssid",
+					Contents = this.WSSID
+				}));
+			}
+			catch (Exception e)
+			{
+				this.SendServerError(e);
+			}
+		}
+
 		/**
 		 * e.FullPath; // Contains the FUll path to the new thing
 		 * e.Name; // COntains the name of the new thing
@@ -245,7 +255,7 @@ namespace moriaSocket.Components.Browser
 			{ // Is a file
 				item.Contents = new BrowserFile(e.FullPath);
 			}
-			Task.Run(() => this.SendAes(Json.Encode(item)));
+			this.SendAes(Json.Encode(item));
 
 		}
 
@@ -257,11 +267,11 @@ namespace moriaSocket.Components.Browser
 		 */
 		public void OnDeleted(object source, FileSystemEventArgs e)
 		{
-			Task.Run(() => this.SendAes(Json.Encode(new ServerMessage
+			this.SendAes(Json.Encode(new ServerMessage
 			{
 				Command = "deleted",
 				Content = Utilities.Idify(e.Name)
-			})));
+			}));
 		}
 
 		/**
@@ -294,7 +304,7 @@ namespace moriaSocket.Components.Browser
 					{ "after", new BrowserFile(e.FullPath) }
 				};
 			}
-			Task.Run(() => this.SendAes(Json.Encode(item)));
+			this.SendAes(Json.Encode(item));
 		}
 
 		public void OnChanged(object source, FileSystemEventArgs e)
@@ -322,7 +332,6 @@ namespace moriaSocket.Components.Browser
 									break;
 								case "cddir":
 									this.DirWatcher.SetFromRelativePath(message.Content);
-									string s = this.DirWatcher.Path;
 									Task.Run(() => this.SendDir());
 									break;
 								case "mkdir":
@@ -343,6 +352,9 @@ namespace moriaSocket.Components.Browser
 								case "fileupload":
 									Task.Run(() => this.ClientFileUpload(message.Contents));
 									break;
+								case "wssid":
+									Task.Run(() => this.SendWSSID());
+									break;
 							}
 							//System.Diagnostics.Debug.WriteLine("Received: " + message);
 						}
@@ -354,7 +366,7 @@ namespace moriaSocket.Components.Browser
 			}
 
 			// Clean up
-			WebSocketManager.BrowserSockets.Remove(this.Key);
+			WebSocketManager.BrowserSockets.Remove(this.WSSID);
 			this.DirWatcher.Dispose();
 		}
 
@@ -364,9 +376,9 @@ namespace moriaSocket.Components.Browser
 			{
 				Command = "error",
 				Contents = new Dictionary<string, string>(1)
-				{
-					{ "message", e.Message }
-				}
+			{
+				{ "message", e.Message }
+			}
 			}));
 		}
 

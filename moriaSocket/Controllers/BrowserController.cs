@@ -48,15 +48,15 @@ namespace moriaSocket.Controllers
 					return new HttpStatusCodeResult(500, "File System Configuration Error.");
 				}
 
-				string key = System.Web.HttpContext.Current.User.Identity.Name + "_" + (Guid.NewGuid()).ToString();
+				string WSSID = System.Web.HttpContext.Current.User.Identity.Name + "_" + (Guid.NewGuid()).ToString();
 				WebSocketManager.BrowserSockets.Add(
-					key, 
+					WSSID, 
 					new Components.Browser.BrowserSocket(
-						key,
+						WSSID,
 						new Components.Browser.BrowserDirectoryWatcher(dir)
 					)
 				);
-				WebSocketManager.BrowserSockets.TryGetValue(key, out Components.Browser.BrowserSocket socket);
+				WebSocketManager.BrowserSockets.TryGetValue(WSSID, out Components.Browser.BrowserSocket socket);
 				HttpContext.AcceptWebSocketRequest(
 					socket.HandleSocket,
 					socket.WebSocketOptions
@@ -69,6 +69,48 @@ namespace moriaSocket.Controllers
 			}
 			return new HttpStatusCodeResult(101, "Switching Protocol");
 
+		}
+
+		public async System.Threading.Tasks.Task<ActionResult> FileDownload(string wssid, string payload)
+		{
+			if (wssid.Length < 1 || payload.Length < 1)
+			{
+				return new HttpStatusCodeResult(400, "Bad Request");
+			}
+			if (HttpContext.Request == null || !HttpContext.Request.IsSecureConnection)
+			{
+				return new HttpStatusCodeResult(505, "Connection must use TLS");
+			}
+			if (!System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+			{
+				return new HttpStatusCodeResult(401, "Not Authorized");
+			}
+			string dir = Environment.GetEnvironmentVariable("ASPNET_MORIA_DIRECTORY", EnvironmentVariableTarget.Machine);
+			if (dir == null)
+			{
+				return new HttpStatusCodeResult(500, "System Configuration Error.");
+			}
+			if (!System.IO.Directory.Exists(dir))
+			{
+				return new HttpStatusCodeResult(500, "File System Configuration Error.");
+			}
+			string result = "";
+			if (WebSocketManager.BrowserSockets.TryGetValue(wssid, out Components.Browser.BrowserSocket socket)) {
+				System.Collections.Generic.Dictionary<string, string> requestJson = System.Web.Helpers.Json.Decode<System.Collections.Generic.Dictionary<string, string>>(socket.DecryptAes(payload));
+				if (requestJson.TryGetValue("path", out string requestPath) && requestPath.Length > 0 && Components.Browser.FileDownload.AllowedPath(dir, requestPath)) {
+					// Get the file and encrypt here
+					string fullPath = dir + System.IO.Path.DirectorySeparatorChar + requestPath;
+					using (Components.Browser.FileDownload fileDownload = new Components.Browser.FileDownload(socket, fullPath))
+					{
+						result = await fileDownload.EncryptToString();
+						fileDownload.Dispose();
+					}
+				}
+			}
+
+
+
+			return Content(result);
 		}
 
 	}

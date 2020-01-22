@@ -18,7 +18,7 @@ namespace moriaSocket
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-			moriaSocket.Components.WebSocketManager wsh = new moriaSocket.Components.WebSocketManager();
+			Components.WebSocketManager wsh = new Components.WebSocketManager();
         }
 
 		void WindowsAuthentication_OnAuthenticate(object sender, WindowsAuthenticationEventArgs e)

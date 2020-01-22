@@ -5,10 +5,14 @@
 	Cwd;
 	Navbar;
 	PreviewOverlay;
+	Downloads;
+	DownloadsArticle;
 
 	constructor() {
 		this.Contents = {};
+		this.Downloads = {};
 		this.Explorer = document.getElementById("DirectoryExplorer");
+		this.DownloadsArticle = document.getElementById("Downloads");
 		this.Cwd = [new Breadcrumb("\\", 0)];
 		this.Navbar = document.getElementById("NavbarPath");
 		this.Navbar.appendChild(this.Cwd[this.Cwd.length - 1].ListItemElem);
@@ -61,26 +65,7 @@
 		document.Socket.SendCdDir();
 	}
 
-	ActionFileClick(event, elem) {
-		//var exists = true;
-		//if (!document.FileRequests.hasOwnProperty(this.Contents[elem.parentElement.id].FileRequestID)) {
-		//	exists = false;
-		//	this.Contents[elem.parentElement.id].FileRequestID = document.Socket.FileRequestID;
-		//	document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID] = new FileRequest(
-		//		elem.parentElement.id
-		//	)
-		//	document.Socket.SendGetFile(
-		//		this.Contents[elem.parentElement.id].Name,
-		//		this.Contents[elem.parentElement.id].FileRequestID
-		//	);
-			
-		//}
-		//if (document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID].CanPreview) {
-		//	this.PreviewOverlay.Show(elem.parentElement.id);
-		//}
-		//if (exists) {
-		//	document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID].Complete = true;
-		//}
+	ActionFileClickSocket(event, elem) {
 		document.FileRequests[this.Contents[elem.parentElement.id].FileRequestID] = new FileRequest(
 			elem.parentElement.id
 		)
@@ -88,6 +73,19 @@
 			this.Contents[elem.parentElement.id].Name,
 			this.Contents[elem.parentElement.id].FileRequestID
 		);
+	}
+
+	ActionFileClick(event, elem) {
+
+		var downloadId = FileDownload.MakeFileDownloadID();
+		this.Downloads[downloadId] = new FileDownload(
+			downloadId,
+			this.GetCwdString(),
+			this.Contents[elem.parentElement.id].Name
+		);
+		this.DownloadsArticle.appendChild(this.Downloads[downloadId].Elem);
+		this.DownloadsArticle.classList.remove('hide');
+		this.Downloads[downloadId].AjaxGet();
 		
 	}
 
@@ -188,6 +186,7 @@
 
 	ErrorReceived(contents) {
 		alert("Server Error." +"\n" + "Message: " + contents.message);
+		console.error("Server Error. Message: ", contents.message);
 	}
 
 	AlertReceived(contents) {
@@ -195,7 +194,7 @@
 	}
 
 	ConsoleLogReceived(contents) {
-		console.log("Server Console Log: " + contents.message);
+		console.log("Server Console Log: ", contents.message);
 	}
 
 }

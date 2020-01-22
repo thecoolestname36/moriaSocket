@@ -123,6 +123,7 @@ li:hover {
     position: fixed;
     transform: scale(1.10);
     filter: blur(5px);
+    background: linear-gradient(to bottom, rgb(185, 226, 254) 0%, rgb(247, 254, 227) 24%, rgb(244, 207, 155) 43%, rgb(133, 176, 200) 63%, rgb(40, 107, 173) 83%, rgb(6, 53, 118) 100%);
     background-repeat: no-repeat;
     background-size: cover;
     background-attachment: fixed;
@@ -396,16 +397,20 @@ div#preview-overlay.preview {
 	width: 100%;
 	height: 100%;
 }
+div.file-download-label {
+    text-align: center;
+    font-weight: 600;
+}
 div#right-click-context-menu {
-	z-index: -1;
-	background-color: rgba(255, 255, 255, 0.93);
-	box-shadow: -3px -3px 1px 3px #00000040;
-	color: white;
-	font-size: 14px;
-	position: absolute;
-	display: none;
-	width: 210px;
-	height: auto;
+    z-index: -1;
+    background-color: rgba(255, 255, 255, 0.93);
+    box-shadow: -3px -3px 1px 3px #00000040;
+    color: white;
+    font-size: 14px;
+    position: absolute;
+    display: none;
+    width: 210px;
+    height: auto;
 }
 	div#right-click-context-menu.show {
 		z-index: 500;

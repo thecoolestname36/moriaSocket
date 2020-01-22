@@ -65,7 +65,6 @@
 			delete this.Data[i];
 		}
 
-
 		//switch ("") {//document.DirectoryExplorer.Contents[this.ContentsID].Extension.toLowerCase()) {
 		//	case ".jpeg":
 		//		document.DirectoryExplorer.PreviewOverlay.Img();
@@ -88,8 +87,6 @@
 		//		document.body.removeChild(a);
 		//}
 
-
-
 		var byteString = atob(data);
 		data = "";
 		var ab = new ArrayBuffer(byteString.length);
@@ -105,33 +102,6 @@
 		document.body.appendChild(a);
 		a.click();
 		document.body.removeChild(a);
-
-		//var contentsId = this.ContentsID;
-		//var ext = document.DirectoryExplorer.Contents[this.ContentsID].Extension.toLowerCase();
-		//var pageImage = new Image();
-		//pageImage.src = this.MIMEString + "," + data;
-		//pageImage.onload = function () {
-		//	const canvas = document.createElement('canvas');
-		//	canvas.width = pageImage.naturalWidth;
-		//	canvas.height = pageImage.naturalHeight;
-
-		//	const ctx = canvas.getContext('2d');
-		//	ctx.imageSmoothingEnabled = false;
-		//	ctx.drawImage(pageImage, 0, 0);
-		//	console.log(canvas, pageImage);
-		//	let fileName = contentsId;
-		//	const link = document.createElement('a');
-		//	link.download = fileName + ext;
-		//	console.log(canvas)
-		//	canvas.toBlob(function (blob) {
-		//		console.log(blob)
-		//		link.href = URL.createObjectURL(blob);
-		//		link.click();
-		//	});
-		//}
-
-
-		//window.location.href = this.MIMEString + "," + data;
 		document.LoadingOverlay.Hide();
 		document.LoadingOverlay.ClearMessage("");
 	}

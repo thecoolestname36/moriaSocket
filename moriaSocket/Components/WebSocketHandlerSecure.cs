@@ -121,15 +121,31 @@ namespace moriaSocket.Components
 			);
 		}
 
-		public Task SendAes(string message, bool endOfMessage = true) {
+		public async void SendAes(string message, bool endOfMessage = true) {
 			byte[] payload = this.SecurityInstance.EncryptAesMessage(message);
 			if (payload.Length == 0)
 			{
 				throw new Exception("AES Encryption error: Encryption failed or no message provided");
 			}
-			return this.Send(Encoding.UTF8.GetBytes(Convert.ToBase64String(payload).ToCharArray()), WebSocketMessageType.Text, endOfMessage);
+			await this.Send(Encoding.UTF8.GetBytes(Convert.ToBase64String(payload).ToCharArray()), WebSocketMessageType.Text, endOfMessage);
 		}
-		
+
+		public string DecryptAes(string payload)
+		{
+			string message = "";
+			if (payload.Length > 0)
+			{
+				message = this.SecurityInstance.DecryptAesMessage(
+					Convert.FromBase64String(payload)
+				);
+			}
+			return message;
+		}
+
+		public byte[] EncryptAes(string message)
+		{
+			return this.SecurityInstance.EncryptAesMessage(message);
+		}
 
 	}
 }

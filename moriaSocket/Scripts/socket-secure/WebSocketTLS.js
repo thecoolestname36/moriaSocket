@@ -97,7 +97,6 @@
 	HandshakeAesBase64(event) {
 		var payload = event.data;
 		var message = this.Security.AesDecrypt(payload);
-		debugger;
 		return message.toString(CryptoJS.enc.Utf8);
 	}
 
@@ -106,7 +105,7 @@
 			var message = this.Security.AesDecrypt(payload.data);
 			this.ReceiveSecure(message.toString(CryptoJS.enc.Utf8));
 		} else {
-			console.log("WARNING: Not ready to receive Aes messages.");
+			console.warn("WARNING: Not ready to receive Aes messages.");
 		}
 	}
 
@@ -120,7 +119,7 @@
 			this.send(payload.ciphertext.toString(CryptoJS.enc.Base64));
 			return true;
 		} else {
-			console.log("WARNING: Not ready to send Aes messages.");
+			console.warn("WARNING: Not ready to send Aes messages.");
 		}
 		return false;
 	}
@@ -135,7 +134,7 @@
 				)
 			);
 		} else {
-			console.log("WARNING: Not ready to send RSA messages.");
+			console.warn("WARNING: Not ready to send RSA messages.");
 		}
 	}
 

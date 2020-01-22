@@ -34,6 +34,16 @@
 		return random;
 	}
 
+	static GenerateHexString(strLength) {
+		var hex = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
+		var random = "";
+		var length = hex.length;
+		for (var i = 0; i < strLength; i++) {
+			random += hex[Number.parseInt(Math.random() * length)];
+		}
+		return random;
+	}
+
 	/**
 	 * Uses http://www-cs-students.stanford.edu/~tjw/jsbn/rsa.html
 	 * @param JSON publicKey
