@@ -97,14 +97,27 @@ namespace moriaSocket.Controllers
 			string result = "";
 			if (WebSocketManager.BrowserSockets.TryGetValue(wssid, out Components.Browser.BrowserSocket socket)) {
 				System.Collections.Generic.Dictionary<string, string> requestJson = System.Web.Helpers.Json.Decode<System.Collections.Generic.Dictionary<string, string>>(socket.DecryptAes(payload));
-				if (requestJson.TryGetValue("path", out string requestPath) && requestPath.Length > 0 && Components.Browser.FileDownload.AllowedPath(dir, requestPath)) {
-					// Get the file and encrypt here
-					string fullPath = dir + System.IO.Path.DirectorySeparatorChar + requestPath;
-					using (Components.Browser.FileDownload fileDownload = new Components.Browser.FileDownload(socket, fullPath))
+				if (requestJson.TryGetValue("path", out string requestPath) && requestJson.TryGetValue("name", out string requestName) && requestName.Length > 0)
+				{
+					string relativePath = requestPath + System.IO.Path.DirectorySeparatorChar + requestName;
+					if (Components.Browser.FileDownload.AllowedPath(dir, relativePath))
 					{
-						result = await fileDownload.EncryptToString();
-						fileDownload.Dispose();
+						string fullPath = dir + relativePath;
+						if (System.IO.File.Exists(fullPath))
+						{
+							using (Components.Browser.FileDownload fileDownload = new Components.Browser.FileDownload(socket, fullPath))
+							{
+								result = await fileDownload.EncryptToString();
+								fileDownload.Dispose();
+							}
+						} else {
+							return new HttpStatusCodeResult(404, "File Not Found");
+						}
+					} else {
+						return new HttpStatusCodeResult(403, "Path Not Allowed");
 					}
+				} else {
+					return new HttpStatusCodeResult(400, "Bad Request");
 				}
 			}
 

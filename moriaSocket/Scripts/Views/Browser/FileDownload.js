@@ -43,19 +43,21 @@
 		this.Elem.appendChild(this.ProgressBar);
 
 		var that = this;
+		var ajaxData = {
+			wssid: document.Socket.WSSID,
+			payload: document.Socket.Security.AesEncrypt(JSON.stringify({
+				path: this.CWD,
+				name: this.Name,
+				noise: Security.GenerateHexString(Number.parseInt(Math.random() * 128))
+			})).ciphertext.toString(CryptoJS.enc.Base64)
+		};
 		this.Ajax = {
 			parent: that,
 			async: true,
 			cache: false,
 			method: "GET",
 			url: window.location.pathname + "Browser/FileDownload",
-			data: {
-				wssid: document.Socket.WSSID,
-				payload: document.Socket.Security.AesEncrypt(JSON.stringify({
-					path: this.CWD + this.Name,
-					noise: Security.GenerateHexString(Number.parseInt(Math.random() * 128))
-				})).ciphertext.toString(CryptoJS.enc.Base64)
-			},
+			data: ajaxData,
 			beforeSend: function (jqXHR, settings) {
 				this.parent.SetProgressBarText("Downloading");
 				this.parent.SetProgressBarValue("25");
@@ -72,6 +74,7 @@
 			complete: function (jqXHR, textStatus) { },
 			error: function (jqXHR, textStatus, errorThrown) {
 				console.error(jqXHR, textStatus, errorThrown);
+				this.parent.FailedDownload(errorThrown);
 			}
 		};
 
@@ -135,6 +138,18 @@
 		$(that.Elem).slideUp(400, function () {
 			document.getElementById("Downloads").removeChild(this);
 		});
+	}
+
+	FailedDownload(errorThrown)
+	{
+		this.ProgressBar.classList.add("progress-bar-danger");
+		this.ProgressBar.innerText = "Failed! " + errorThrown;
+		setTimeout(function (that) {
+			$(that.Elem).slideUp(400, function () {
+				document.getElementById("Downloads").removeChild(this);
+			});
+		}, 3000, this);
+
 	}
 
 
