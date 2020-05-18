@@ -46,7 +46,7 @@ namespace moriaSocket
 			bundles.Add(new ScriptBundle("~/viewBundles/browser")
 				.Include("~/Scripts/Views/Browser/LoadingOverlay.js")
 				//.Include("~/Scripts/Views/Browser/FileRequest.js")
-				.Include("~/Scripts/Views/Browser/FileDownload.js")
+				.Include("~/Scripts/Views/Browser/FileEncryptDownload.js")
 				.Include("~/Scripts/Views/Browser/Breadcrumb.js")
 				.Include("~/Scripts/Views/Browser/ServerMessage.js")
 				.Include("~/Scripts/Views/Browser/ClientMessage.js")

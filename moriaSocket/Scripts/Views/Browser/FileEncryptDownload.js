@@ -1,12 +1,12 @@
-﻿class FileDownload {
+﻿class FileEncryptDownload {
 
 	/**
 	 * Static method to keep the id unique
 	 */
-	static _FileDownloadID = -1;
-	static MakeFileDownloadID() {
-		this._FileDownloadID++;
-		return 'file-download-' + this._FileDownloadID.toString();
+	static _FileEncryptDownloadID = -1;
+	static MakeFileEncryptDownloadID() {
+		this._FileEncryptDownloadID++;
+		return 'file-encrypt-download-' + this._FileEncryptDownloadID.toString();
 	}
 
 	Elem;
@@ -55,8 +55,8 @@
 			parent: that,
 			async: true,
 			cache: false,
-			method: "GET",
-			url: window.location.pathname + "Browser/FileDownload",
+			method: "POST",
+			url: window.location.pathname + "Browser/FileEncryptDownload",
 			data: ajaxData,
 			beforeSend: function (jqXHR, settings) {
 				this.parent.SetProgressBarText("Downloading");
@@ -69,7 +69,7 @@
 				document.LoadingOverlay.SetMessage("Decrypting...");
 				document.LoadingOverlay.Show();
 
-				setTimeout(FileDownload.ParseDownload, 200, this.parent, data);
+				setTimeout(FileEncryptDownload.ParseDownload, 200, this.parent, data);
 			},
 			complete: function (jqXHR, textStatus) { },
 			error: function (jqXHR, textStatus, errorThrown) {
@@ -136,7 +136,7 @@
 		that.SetProgressBarValue("100");
 
 		$(that.Elem).slideUp(400, function () {
-			document.getElementById("Downloads").removeChild(this);
+			document.getElementById("EncryptDownloads").removeChild(this);
 		});
 	}
 
@@ -146,7 +146,7 @@
 		this.ProgressBar.innerText = "Failed! " + errorThrown;
 		setTimeout(function (that) {
 			$(that.Elem).slideUp(400, function () {
-				document.getElementById("Downloads").removeChild(this);
+				document.getElementById("EncryptDownloads").removeChild(this);
 			});
 		}, 3000, this);
 

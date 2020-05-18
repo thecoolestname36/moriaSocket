@@ -3,9 +3,9 @@
 	Hidden = true;
 	Elem;
 	Divider;
+	EncryptDownloadRow;
 	RenameRow;
 	ChangeFileExtensionRow;
-	StaticElementsCount;
 	DeleteRow;
 	TargetID;
 	_PosX;
@@ -23,25 +23,6 @@
 		this._PosY = y;
 	};
 	
-
-//	
-//	<div class="row">
-//		<button class="menubar-button button-glass" onclick="document.RightClickContextMenu.ActionRename(event, this)">
-//			Rename
-//				</button>
-//	</div>
-//	<div class="row">
-//		<button class="menubar-button button-glass" onclick="document.RightClickContextMenu.ActionChangeFileExtension(event, this)">
-//			Change File Extension
-//				</button>
-//	</div>
-//	<div class="row">
-//		<button class="menubar-button button-glass" onclick="document.RightClickContextMenu.ActionDelete(event, this)">
-//			Delete
-//				</button>
-//	</div>
-//</div>
-
 	constructor(id) {
 		this._PosX = 0;
 		this._PosY = 0;
@@ -52,6 +33,13 @@
 		this.Divider = document.createElement("div");
 		this.Divider.className = "row divider";
 		this.Divider.innerHTML - "";
+
+		this.EncryptDownloadRow = document.createElement("div");
+		this.EncryptDownloadRow.className = "row file-item";
+		this.EncryptDownloadRow.appendChild(document.createElement("button"));
+		this.EncryptDownloadRow.firstElementChild.className = "menubar-button button-glass";
+		this.EncryptDownloadRow.firstElementChild.setAttribute("onclick", "document.RightClickContextMenu.ActionEncryptDownload(event, this)");
+		this.EncryptDownloadRow.firstElementChild.innerText = "Encrypt & Download";
 
 		this.RenameRow = document.createElement("div");
 		this.RenameRow.className = "row";
@@ -73,11 +61,6 @@
 		this.ChangeFileExtensionRow.firstElementChild.className = "menubar-button button-glass";
 		this.ChangeFileExtensionRow.firstElementChild.setAttribute("onclick", "document.RightClickContextMenu.ActionChangeFileExtension(event, this)");
 		this.ChangeFileExtensionRow.firstElementChild.innerText = "Change File Extension";
-
-		this.Elem.firstElementChild.appendChild(this.RenameRow);
-		this.Elem.firstElementChild.appendChild(this.DeleteRow);
-		this.StaticElementsCount = this.Elem.firstElementChild.childElementCount;
-
 	}
 
 	ActionHideContextMenu() {
@@ -86,25 +69,42 @@
 		}
 	}
 
-	Show(id, x, y) {
+	ShowDirectory(id, x, y) {
 		this.Hidden = false;
 		this.TargetID = id;
 		this.PosX = x;
 		this.PosY = y;
 		this.Elem.setAttribute("style", this.PosX + this.PosY);
-		if (document.DirectoryExplorer.Contents[this.TargetID].Type == "file") {
-			this.Elem.firstElementChild.appendChild(this.Divider);
-			this.Elem.firstElementChild.appendChild(this.ChangeFileExtensionRow);
-		}
+		this.Elem.firstElementChild.appendChild(this.RenameRow);
+		this.Elem.firstElementChild.appendChild(this.DeleteRow);
+		this.Elem.className = "show";
+	}
+
+	ShowFile(id, x, y) {
+		this.Hidden = false;
+		this.TargetID = id;
+		this.PosX = x;
+		this.PosY = y;
+		this.Elem.setAttribute("style", this.PosX + this.PosY);
+		this.Elem.firstElementChild.appendChild(this.EncryptDownloadRow);
+		this.Elem.firstElementChild.appendChild(this.ChangeFileExtensionRow);
+		this.Elem.firstElementChild.appendChild(this.Divider);
+		this.Elem.firstElementChild.appendChild(this.RenameRow);
+		this.Elem.firstElementChild.appendChild(this.DeleteRow);
 		this.Elem.className = "show";
 	}
 
 	Hide() {
 		this.Hidden = true;
 		this.Elem.className = "";
-		for (var i = this.StaticElementsCount, max = this.Elem.firstElementChild.childElementCount; i < max; i++) {
+		for (var i = 0, max = this.Elem.firstElementChild.childElementCount; i < max; i++) {
 			this.Elem.firstElementChild.removeChild(this.Elem.firstElementChild.lastChild);
 		}	
+	}
+
+	ActionEncryptDownload(event, elem) {
+		document.DirectoryExplorer.EncryptDownload(this.TargetID);
+		this.Hide();
 	}
 
 	ActionRename(event, elem) {

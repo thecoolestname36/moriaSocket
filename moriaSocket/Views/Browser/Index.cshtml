@@ -54,7 +54,13 @@
 					</div>
 				</article>
 				<article id="DirectoryExplorer" class="container-fluid"></article>
-				<article id="Downloads" class="container-fluid hide"></article>
+				<article id="EncryptDownloads" class="container-fluid hide"></article>
+				<article id="Download" class="hide">
+					<form id="DownloadForm" method="post" action="@Url.Action("FileDownload")">
+						<input name="Wssid" />
+						<input name="Payload" />
+					</form>
+				</article>
 			</section>
 		</div>
 	</div>

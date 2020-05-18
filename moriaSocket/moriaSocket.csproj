@@ -19,7 +19,6 @@
     <UseIISExpress>false</UseIISExpress>
     <Use64BitIISExpress>true</Use64BitIISExpress>
     <IISExpressSSLPort>50375</IISExpressSSLPort>
-    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
     <IISExpressWindowsAuthentication>disabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
     <UseGlobalApplicationHostFile />
@@ -153,6 +152,7 @@
     </Compile>
     <Compile Include="Components\Browser\BrowserDirectory.cs" />
     <Compile Include="Components\Browser\BrowserFile.cs" />
+    <Compile Include="Components\Browser\FileEncryptDownload.cs" />
     <Compile Include="Components\Browser\FileRequest.cs" />
     <Compile Include="Components\Browser\FileUpload.cs" />
     <Compile Include="Components\Browser\ServerMessage.cs" />
@@ -170,6 +170,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Browser\Download.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -226,6 +227,7 @@
     <Content Include="Scripts\Views\Browser\DirectoryItem.js" />
     <Content Include="Scripts\Views\Browser\DirectoryExplorer.js" />
     <Content Include="Scripts\Views\Browser\FileItem.js" />
+    <Content Include="Scripts\Views\Browser\FileEncryptDownload.js" />
     <Content Include="Scripts\Views\Browser\FileRequest.js" />
     <Content Include="Scripts\Views\Browser\Item.js" />
     <Content Include="Scripts\Views\Browser\LoadingOverlay.js" />
@@ -256,7 +258,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="directories\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
@@ -289,7 +290,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50375</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>https://127.0.0.1/</IISUrl>
+          <IISUrl>https://localhost</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>https://10.0.0.2</CustomServerUrl>
